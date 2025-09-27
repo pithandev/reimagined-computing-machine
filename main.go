@@ -9,31 +9,35 @@ import (
 
 func main() {
 
-	reader := bufio.NewScanner(os.Stdin)
+	scan := bufio.NewScanner(os.Stdin)
 
-	for {
+	quit := false
 
+	for !quit {
+
+		fmt.Println()
 		fmt.Println("TRY SAVE SOMETHING IN TXT FILE.")
-		fmt.Println("type \"0\" to exit the program.")
+		fmt.Println("1) Save.")
+		fmt.Println("2) Show data.")
+		fmt.Println("0) QUIT!!!")
 		fmt.Println()
 
-		reader.Scan()
-
-		opt := reader.Text()
+		scan.Scan()
+		opt := scan.Text()
 
 		switch opt {
 		case "1":
-			fmt.Println("Type what u wanna save: ")
-			scan := bufio.NewReader(os.Stdin)
-			text, err := scan.ReadString('\n')
 
-			if err != nil {
-				fmt.Print(err)
-			}
+			textScan := bufio.NewScanner(os.Stdin)
+			textScan.Scan()
+
+			text := textScan.Text()
 
 			save(text)
+		case "2":
+
 		case "0":
-			return
+			quit = true
 		}
 
 	}
@@ -42,12 +46,18 @@ func main() {
 
 func save(data string) string {
 
-	err := os.WriteFile("storage.txt", []byte(data), 0644)
+	file, err := os.OpenFile("storage.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
 		fmt.Println(err)
 
 	}
+
+	if _, err := file.Write([]byte(data)); err != nil {
+		fmt.Println(err)
+	}
+
+	defer file.Close()
 
 	return "Data stored!"
 }
