@@ -35,7 +35,7 @@ func main() {
 
 			save(text)
 		case "2":
-
+			fmt.Println(getAll())
 		case "0":
 			quit = true
 		}
@@ -46,18 +46,27 @@ func main() {
 
 func save(data string) string {
 
-	file, err := os.OpenFile("storage.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	writeFile, err := os.OpenFile("storage.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
 		fmt.Println(err)
-
 	}
 
-	if _, err := file.Write([]byte(data)); err != nil {
+	if _, err := writeFile.WriteString(data + "\n"); err != nil {
 		fmt.Println(err)
 	}
 
-	defer file.Close()
+	defer writeFile.Close()
 
 	return "Data stored!"
+}
+
+func getAll() string {
+	readFile, err := os.ReadFile("storage.txt")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return string(readFile)
 }
